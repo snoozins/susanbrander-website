@@ -39,13 +39,24 @@ import { talks } from '../data/speaking';
               <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-ink-muted)">
                 {talk.description}
               </p>
+              {talk.videoUrl && (
+                <a
+                  href={talk.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 mt-3 text-sm font-medium no-underline hover:underline"
+                >
+                  <span aria-hidden="true">▶</span>
+                  {talk.videoLabel ?? 'Watch the talk'}
+                </a>
+              )}
             </article>
           </li>
         ))
       }
     </ol>
 
-    <div class="mt-12 grid grid-cols-2 gap-3 sm:gap-4" aria-label="Photos from speaking engagements">
+    <div class="mt-12 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4" aria-label="Photos from speaking engagements">
       <img
         src="/images/susan-speaking-3.jpeg"
         alt="Susan Brander presenting on stage"
@@ -58,6 +69,37 @@ import { talks } from '../data/speaking';
         class="w-full rounded-lg object-cover aspect-[3/4]"
         loading="lazy"
       />
+      <img
+        src="/images/susan-ddd-adelaide-2025.jpeg"
+        alt="Susan Brander at DDD Adelaide 2025"
+        class="w-full rounded-lg object-cover aspect-[3/4]"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="mt-12 pt-10 border-t" style="border-color: var(--color-border)">
+      <h3 class="font-display text-lg font-semibold mb-3">MC</h3>
+      <p class="text-sm leading-relaxed mb-4" style="color: var(--color-ink-muted)">
+        I regularly MC Melbourne tech events, keeping sessions moving and audiences engaged.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-6 items-start">
+        <img
+          src="/images/susan-mc-yow-2025.jpeg"
+          alt="Susan Brander MCing at YOW! Melbourne 2025"
+          class="w-full sm:w-40 rounded-lg object-cover flex-shrink-0"
+          style="aspect-ratio: 3/4; object-position: top"
+          loading="lazy"
+        />
+        <ul class="flex flex-wrap gap-2 content-start" role="list">
+          {['YOW! Melbourne', 'YOW! Tech Leaders Summit', 'Tech Leading Ladies'].map((event) => (
+            <li>
+              <span class="inline-block px-3 py-1 rounded-full text-sm font-medium" style="background-color: var(--color-surface); color: var(--color-ink)">
+                {event}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </section>
