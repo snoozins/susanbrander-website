@@ -1,0 +1,81 @@
+---
+interface Link {
+  label: string;
+  href: string;
+  description: string;
+  external: boolean;
+}
+
+const links: Link[] = [
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/susan-brander/',
+    description: 'Connect and follow on LinkedIn',
+    external: true,
+  },
+  {
+    label: 'Tech Leading Ladies',
+    href: 'https://techleadingladies.com/',
+    description: 'Community bridging the gender gap in technical leadership',
+    external: true,
+  },
+  {
+    label: 'Kaleida',
+    href: 'https://www.kaleida.team/',
+    description: 'The platform helping engineering teams grow better leaders',
+    external: true,
+  },
+  {
+    label: 'Speaking enquiries',
+    href: 'mailto:hello@susanbrander.com',
+    description: 'Invite Susan to speak at your conference or event',
+    external: false,
+  },
+];
+---
+
+<section id="links" aria-label="Key links" class="py-16 sm:py-20 border-t" style="border-color: var(--color-border)">
+  <div class="mx-auto max-w-[680px] px-6 sm:px-8">
+    <h2 class="font-display text-2xl sm:text-3xl font-semibold mb-6">Links</h2>
+
+    <ul role="list" class="divide-y divide-border">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              class="link-row group flex items-center justify-between py-5 gap-4 no-underline hover:no-underline"
+            >
+              <div>
+                <span class="link-label block font-semibold transition-colors" style="color: var(--color-ink)">
+                  {link.label}
+                </span>
+                <span class="block text-sm mt-0.5" style="color: var(--color-ink-muted)">
+                  {link.description}
+                </span>
+              </div>
+              <span class="link-arrow flex-shrink-0 text-lg" style="color: var(--color-ink-muted)" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .link-row:hover .link-label {
+    color: var(--color-accent) !important;
+  }
+  .link-row:hover .link-arrow {
+    color: var(--color-accent) !important;
+    transform: translateX(3px);
+  }
+  .link-arrow {
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+</style>

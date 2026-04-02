@@ -1,0 +1,35 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t py-10 sm:py-12" style="border-color: var(--color-border)">
+  <div
+    class="mx-auto max-w-[680px] px-6 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+  >
+    <p class="text-sm" style="color: var(--color-ink-muted)">
+      &copy; {year} Susan Brander &mdash; Melbourne, Australia
+    </p>
+
+    <nav aria-label="Footer links" class="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      <a
+        href="https://www.linkedin.com/in/susan-brander/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-medium"
+      >
+        LinkedIn
+      </a>
+      <a
+        href="https://techleadingladies.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-medium"
+      >
+        Tech Leading Ladies
+      </a>
+      <a href="mailto:hello@susanbrander.com" class="font-medium">
+        Contact
+      </a>
+    </nav>
+  </div>
+</footer>

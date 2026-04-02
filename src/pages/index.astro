@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Speaking from '../components/Speaking.astro';
+import TechLeadingLadies from '../components/TechLeadingLadies.astro';
+import Links from '../components/Links.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Susan Brander"
+  description="CTO at Kaleida, founder of Tech Leading Ladies, and conference speaker on technical leadership, continuous improvement, and building great engineering cultures."
+  ogTitle="Susan Brander — Technical depth. Human-first leadership."
+  ogDescription="CTO at Kaleida, founder of Tech Leading Ladies, and conference speaker across the ANZ tech circuit."
+>
+  <main>
+    <Hero />
+    <About />
+    <Speaking />
+    <TechLeadingLadies />
+    <Links />
+  </main>
+  <Footer />
+</BaseLayout>

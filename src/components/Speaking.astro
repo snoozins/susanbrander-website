@@ -1,0 +1,48 @@
+---
+import { talks } from '../data/speaking';
+---
+
+<section id="speaking" aria-label="Conference speaking" class="py-16 sm:py-20 border-t" style="border-color: var(--color-border)">
+  <div class="mx-auto max-w-[680px] px-6 sm:px-8">
+    <h2 class="font-display text-2xl sm:text-3xl font-semibold mb-4">Speaking</h2>
+
+    <p class="mb-10 leading-relaxed" style="color: var(--color-ink-muted)">
+      I speak across the ANZ tech circuit on engineering leadership, continuous improvement, and
+      software architecture. Interested in having me at your event?{' '}
+      <a href="mailto:hello@susanbrander.com">Get in touch.</a>
+    </p>
+
+    <ol class="space-y-8" role="list">
+      {
+        talks.map((talk) => (
+          <li role="listitem">
+            <article class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 text-sm font-medium" style="color: var(--color-ink-muted)">
+                <span>{talk.conference}</span>
+                {talk.date && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{talk.date}</span>
+                  </>
+                )}
+              </div>
+              <h3 class="font-display text-lg font-semibold leading-snug">
+                <a
+                  href={talk.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="no-underline hover:underline"
+                >
+                  {talk.title}
+                </a>
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-ink-muted)">
+                {talk.description}
+              </p>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colour palette — warm, confident, not generic tech blue */
+  --color-cream: #FAF8F5;
+  --color-ink: #1A1614;
+  --color-ink-muted: #6B5E56;
+  --color-accent: #9E4B1E;       /* links, button bg — passes AA contrast on cream */
+  --color-accent-hover: #7D3915; /* hover state */
+  --color-accent-border: #C4622D; /* decorative borders — not used for text */
+  --color-border: #E8E2DB;
+  --color-surface: #F2EDE7;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+
+  p + p {
+    margin-top: 1em;
+  }
+
+  /* Inline body links */
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color 0.15s ease;
+  }
+
+  a:hover {
+    color: var(--color-accent-hover);
+  }
+
+  /* Accessible focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+}
