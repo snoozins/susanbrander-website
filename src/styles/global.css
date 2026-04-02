@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colour palette — warm, confident, not generic tech blue */
-  --color-cream: #FAF8F5;
+  /* Colour palette — borrowing from Tech Leading Ladies brand */
+  --color-cream: #EDE9FE;
   --color-ink: #1A1614;
   --color-ink-muted: #6B5E56;
-  --color-accent: #9E4B1E;       /* links, button bg — passes AA contrast on cream */
-  --color-accent-hover: #7D3915; /* hover state */
-  --color-accent-border: #C4622D; /* decorative borders — not used for text */
-  --color-border: #E8E2DB;
-  --color-surface: #F2EDE7;
+  --color-accent: #7C3AED;       /* links, button bg — passes AA contrast on background (5.4:1) */
+  --color-accent-hover: #6D28D9; /* hover state */
+  --color-accent-border: #9333EA; /* decorative borders — TLL brand purple */
+  --color-border: #C4B5FD;       /* violet-300 — shows against the lavender background */
+  --color-surface: #DDD6FE;      /* violet-200 — slightly deeper for surface contrast */
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, serif;
