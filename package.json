@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "og": "node --experimental-strip-types scripts/generate-og.ts"
   },
   "dependencies": {
     "astro": "^5.7.0"
