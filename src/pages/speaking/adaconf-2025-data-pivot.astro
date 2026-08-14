@@ -1,0 +1,636 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const accessPatterns = [
+  { need: 'I know the userId, I need the user record', source: 'AppTable', pk: 'USER#<UserId>', sk: 'Eq USER#' },
+  { need: 'I need all the skill data for a user', source: 'AppTable', pk: 'USER#<UserId>', sk: 'Begins with SKILL#' },
+  { need: 'I need to find the id of a skill', source: 'gsi1', pk: 'SKILL#', sk: '' },
+  { need: 'I need to see all the users in a team', source: 'gsi1', pk: 'TEAM#<TeamId>', sk: 'Begins with USER#' },
+  { need: 'I need to find an organisationId', source: 'gsi1', pk: 'ORGANISATION#', sk: '' },
+  { need: 'I need to see all the GOALs for a user', source: 'gsi2', pk: 'USER#<UserId>#GOAL#', sk: '' },
+];
+
+/**
+ * Experiment scorecard from the talk: what each R&D iteration did and didn't
+ * resolve. `true` is a pass. Five iterations, left to right.
+ */
+const experiments = [
+  { dimension: 'Queries to get the data', results: [true, false, true, true, true] },
+  { dimension: 'Model flattened objects', results: [true, false, true, true, true] },
+  { dimension: 'PKs and SKs', results: [false, true, false, true, true] },
+  { dimension: 'Relationships', results: [true, false, false, false, true] },
+  { dimension: 'Secondary index PKs and SKs', results: [false, false, true, true, true] },
+  { dimension: 'Ad-hoc queries', results: [false, false, true, false, true] },
+  { dimension: 'Auditing', results: [true, true, true, true, true] },
+];
+
+const facts = [
+  { label: 'Migration', value: 'About 4 months' },
+  { label: 'Company', value: '4 people' },
+  { label: 'Downtime', value: 'None' },
+  { label: 'Unblocked', value: '5 customers' },
+];
+
+const spine = [
+  'Kept it simple while we were learning',
+  'When it stopped working, dove deeply into why',
+  'Modelled past and future',
+  'Experimented to boost confidence',
+  'Built a plan to go forward',
+  'Moved slowly and safely along the plan',
+  'Got it over the line',
+  'Finished the clean up',
+  'Celebrated the win',
+];
+---
+
+<BaseLayout
+  title="Changing the engine mid-flight: A startup data pivot | Susan Brander"
+  description="How we replaced the database underneath a live product during scale-up, in a four-person company, with no downtime and no customer ever noticing. A case study from ADAConf 2025."
+  ogTitle="Changing the engine mid-flight: A startup data pivot"
+  ogDescription="Replacing the database underneath a live product during scale-up. Four months, a four-person company, zero downtime."
+  ogImage="/og/adaconf-2025-data-pivot.png"
+>
+  <main>
+    <article>
+      <!-- Header -->
+      <header class="pt-14 sm:pt-20 pb-10">
+        <div class="mx-auto max-w-[680px] px-6 sm:px-8">
+          <a href="/#speaking" class="inline-flex items-center gap-1.5 text-sm font-medium no-underline hover:underline">
+            <span aria-hidden="true">←</span>
+            Back to speaking
+          </a>
+
+          <p class="mt-8 text-sm font-medium" style="color: var(--color-ink-muted)">
+            ADAConf 2025, Melbourne <span aria-hidden="true">·</span> November 2025
+          </p>
+
+          <h1 class="mt-3 font-display text-3xl sm:text-4xl font-semibold leading-tight">
+            Changing the engine mid-flight: A startup data pivot
+          </h1>
+
+          <p class="mt-5 text-lg leading-relaxed" style="color: var(--color-ink-muted)">
+            We completely replaced our database during a scale-up phase. That sounds insane when I
+            say it out loud.
+          </p>
+
+          <a
+            href="https://www.youtube.com/watch?v=pgXjchZjuMI"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 mt-6 text-sm font-medium no-underline hover:underline"
+          >
+            <span aria-hidden="true">▶</span>
+            Watch the talk
+          </a>
+
+          <dl class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-6 pt-8 border-t" style="border-color: var(--color-border)">
+            {
+              facts.map((fact) => (
+                <div>
+                  <dt class="text-xs font-medium uppercase tracking-wide" style="color: var(--color-ink-muted)">
+                    {fact.label}
+                  </dt>
+                  <dd class="mt-1 font-display text-xl font-semibold">{fact.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          <aside
+            aria-label="How this page was written"
+            class="mt-10 p-4 sm:p-5 rounded-lg text-sm leading-relaxed"
+            style="background-color: var(--color-surface); color: var(--color-ink)"
+          >
+            <p class="font-medium mb-1">How this page was written</p>
+            <p style="color: var(--color-ink-muted)">
+              This is an AI-generated summary of my talk, written from my own speaker notes and
+              reviewed and edited by me before publishing. The words and quotes are mine, the structure is
+              not. If you want the original,
+              <a href="https://www.youtube.com/watch?v=pgXjchZjuMI" target="_blank" rel="noopener noreferrer">watch the talk</a>.
+            </p>
+          </aside>
+        </div>
+      </header>
+
+      <!-- Body -->
+      <div class="mx-auto max-w-[680px] px-6 sm:px-8 pb-16 space-y-14">
+        <section aria-labelledby="summary">
+          <h2 id="summary" class="font-display text-2xl font-semibold mb-5">The short version</h2>
+          <p class="leading-relaxed">
+            Eighteen months into building Kaleida, a bootstrapped startup helping leaders turn
+            performance data into real career conversations, the data model that had carried us
+            through validation stopped flexing. Basic customer requests were getting harder, not
+            easier. Every screen was running expensive Dynamo scans instead of queries. Half the
+            team wanted to swap DynamoDB for SQL and get back to shipping.
+          </p>
+          <p class="leading-relaxed">
+            Instead we paused and took the time to understand the actual problem. We ran Event Storming and
+            found that a large part of it was a shared-language and modelling problem rather than solely a tech problem.
+            We brought in an outside expert, defined our domain models, ran a formal R&amp;D experiment for our tech problems, and then rebuilt on
+            the same technology with a completely different data model: DynamoDB single-table
+            design. We executed it as a dual-write migration with verification, alarmed fallback
+            reads, and per-object cutovers, while continuing to ship features and onboard
+            customers. It immediately unblocked five prospective customers who had previously been unable to
+            onboard.
+          </p>
+        </section>
+
+        <section aria-labelledby="signal">
+          <h2 id="signal" class="font-display text-2xl font-semibold mb-5">The signal</h2>
+          <p class="leading-relaxed">
+            We started with one dynamo table per object. A User table, an Assessment table, a
+            UserContribution table. There were no diagrams and no modelling discussions. The models
+            lived as domain classes in the code, and that was a deliberate choice rather than an
+            oversight. We were prioritising learning and delivery over modelling for a flexibility
+            we did not yet know we needed. It was genuinely fine, because we were a small team
+            iterating collaboratively and everyone could see the models and contribute to them.
+          </p>
+          <p class="leading-relaxed">
+            There was an earlier fork, about a year in. We already knew Assessments was wrong. We
+            had built it on the assumption that people work through an assessment from beginning to
+            end, and they don't. They go backwards, forwards, stop-start, and jump around. We
+            adapted the UI to cope, but the model still wanted a start date, a finish date, and one
+            assessment closed before the next opened.
+          </p>
+          <p class="leading-relaxed">
+            Restructuring away from it felt like a big step, because Assessments was the wrapper
+            around all skill information. A core concept, not a peripheral object we could delete.
+            We knew its whole existence was wrong. We did not yet know what right looked like. So we
+            patched. I am an advocate for the last responsible moment, and I am certain that bias
+            influenced the call.
+          </p>
+          <p class="leading-relaxed">
+            What broke it was success. More customers, more prospects, more features. And then our founding
+            customer restructured their organisation and needed more than one team lead per team,
+            people in more than one team, and more role levels. Every customer was different and special, and the
+            feature requests were piling up from every side.
+          </p>
+          <blockquote class="my-7 pl-5 border-l-2 font-display text-lg leading-snug italic" style="border-color: var(--color-accent-border)">
+            Assessments weren't really assessments. The way we displayed teams didn't match our customers' actual teams. Our permission
+            sets didn't quite line up. Small patches on top of each other were turning into problems.
+          </blockquote>
+          <p class="leading-relaxed">
+            Our simple and elegant system was starting to groan and creak. But that is what
+            software does. It grows up, and we were just reaching our time-to-grow-up phase.
+            <strong>This is a signal, not a disaster or a failure.</strong>
+          </p>
+        </section>
+
+        <section aria-labelledby="evaluation">
+          <h2 id="evaluation" class="font-display text-2xl font-semibold mb-5">
+            Resisting "just swap the tech"
+          </h2>
+          <p class="leading-relaxed">
+            The team squarely blamed the database, and they weren't wrong. It was the biggest pain
+            point, and SQL was familiar and sitting right there in our existing skill set.
+          </p>
+          <blockquote class="my-7 pl-5 border-l-2 font-display text-lg leading-snug italic" style="border-color: var(--color-accent-border)">
+            Any time you find yourself using the word "just", there is a chance that you are doing
+            some mental laziness.
+          </blockquote>
+          <p class="leading-relaxed">
+            Swapping to SQL was a legitimate option. It was not the <em>only</em> option.
+            If you are replacing your whole database, you can afford to spend a little time doing a proper
+            evaluation. No matter how rushed you are, the choices you make here have long reaching
+            effects.
+          </p>
+          <p class="leading-relaxed">So we did three things before committing to anything.</p>
+
+          <h3 class="font-display text-lg font-semibold mt-8 mb-3">1. Model what you have</h3>
+          <p class="leading-relaxed">
+            Not to redesign. To understand. We drew out the existing data structures, put every
+            outstanding feature request on a post-it against them, sorted each one as possible,
+            easy, or hard, then clustered them to separate the universal from the per-customer. The
+            questions we were actually asking: were the objects wrong, were the indexes wrong, or
+            were the queries wrong?
+          </p>
+          <p class="leading-relaxed">
+            <strong>Two rules for this step: don't fix it, and don't judge it.</strong> This is
+            information gathering, not a performance review of past decisions. Plenty of teams leap
+            straight to redesign, and that is not wrong, but you overlook things when you skip
+            understanding what you already have.
+          </p>
+
+          <h3 class="font-display text-lg font-semibold mt-8 mb-3">2. Model what it should be</h3>
+          <p class="leading-relaxed">
+            The technical deep dive surfaced something we hadn't expected. Part of the team thought
+            it was purely a tech problem. Others thought Dynamo was still right and we were simply
+            using it wrong. Underneath both positions was the same thing: we were collectively
+            misusing the language. Different terms meant different things to different people,
+            especially amongst the founding team.
+          </p>
+          <p class="leading-relaxed">
+            We ran Event Storming with a dedicated facilitator, across a few sessions over a few days. Buy-in was
+            easy for a slightly funny reason: everyone already believed <em>other</em> people were
+            misunderstanding them, and wanted a session where they would finally be understood.
+          </p>
+          <p class="leading-relaxed">
+            We ran it with everyone in the company, including the people who were not engineers.
+            That was not a nice-to-have. The words we were misusing were sales words and product
+            words as much as technical ones, so a room with only engineers in it would have agreed
+            on a language that was still wrong.
+          </p>
+          <blockquote class="my-7 pl-5 border-l-2 font-display text-lg leading-snug italic" style="border-color: var(--color-accent-border)">
+            Tech choices are much easier and obvious when you understand and agree on the shape of
+            the problem.
+          </blockquote>
+          <p class="leading-relaxed">
+            It gave us aligned terminology, agreement on correct system behaviour, explicit
+            boundaries, and new domain models built from the whole team's understanding. It also
+            gave us something I didn't anticipate: newer team members could start to trust us when
+            we told them something.
+          </p>
+
+          <p class="leading-relaxed">
+            This became the point where we stopped patching and committed to a rebuild. We now knew how far away our existing structures and models were from what we needed to grow into. 
+          </p>
+
+          <h3 class="font-display text-lg font-semibold mt-8 mb-3">3. Ask, then experiment</h3>
+          <p class="leading-relaxed">
+            Dynamo had given us things I really valued. No servers, a friendly free tier, easy IaC,
+            little schema management, automatic scaling, and cheap. It felt like a great tool we
+            hadn't managed to make work for us. So was it a skill issue, or a tech issue?
+          </p>
+          <p class="leading-relaxed">
+            When you are stuck, remember you never have to be alone. I went to my network and found
+            an expert who looked at what we had built and what we wanted, and said: I have an idea
+            for you. The idea was DynamoDB single-table design. Our reaction was whoa, incredible,
+            and also scary and new. It felt right, and we were not confident we could implement it
+            ourselves.
+          </p>
+          <p class="leading-relaxed">
+            When you lack confidence but are inspired, use an experimentation method. We chose a
+            formal R&amp;D space, modelling both existing and future data to verify we both
+            <em>could</em> and <em>should</em> take this approach. Several iterations, all
+            lightweight. It's not an experiment if you end up building a
+            second product alongside your real one. We did "enough to learn". 
+            That is what buys you guidance and confidence about the path forward.
+          </p>
+          <p class="leading-relaxed">
+            Here is what that actually looked like. Seven things we needed the new model to handle,
+            five short iterations, and how each one landed.
+          </p>
+
+          <div class="mt-6 -mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto">
+            <table class="w-full min-w-[520px] text-sm border-collapse">
+              <caption class="sr-only">
+                Experiment overview and outcomes: seven capabilities tested across five iterations,
+                showing which passed and which failed in each round
+              </caption>
+              <thead>
+                <tr class="text-left border-b-2" style="border-color: var(--color-accent-border)">
+                  <th scope="col" class="py-2 pr-4 font-medium">What we tested</th>
+                  {
+                    experiments[0].results.map((_, i) => (
+                      <th scope="col" class="py-2 px-2 font-medium text-center whitespace-nowrap">
+                        <span aria-hidden="true">{i + 1}</span>
+                        <span class="sr-only">Iteration {i + 1}</span>
+                      </th>
+                    ))
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  experiments.map((row) => (
+                    <tr class="border-b" style="border-color: var(--color-border)">
+                      <th scope="row" class="py-2.5 pr-4 font-normal text-left">{row.dimension}</th>
+                      {
+                        row.results.map((passed) => (
+                          <td class="py-2.5 px-2 text-center">
+                            <span
+                              aria-hidden="true"
+                              class="font-semibold"
+                              style={`color: ${passed ? '#15803D' : '#B91C1C'}`}
+                            >
+                              {passed ? '✓' : '✗'}
+                            </span>
+                            <span class="sr-only">{passed ? 'Pass' : 'Fail'}</span>
+                          </td>
+                        ))
+                      }
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-6 leading-relaxed" style="color: var(--color-ink-muted)">
+            Auditing worked from the first pass. Relationships, the thing that had us stuck in the
+            first place, did not come good until the fifth. Experiments turn your gut feels and intentions into data-validated decisions. 
+          </p>
+        </section>
+
+        <section aria-labelledby="design">
+          <h2 id="design" class="font-display text-2xl font-semibold mb-5">The new design</h2>
+          <p class="leading-relaxed">
+            One table, two global secondary indexes. Keys became composite strings of the type and
+            the ID, concatenated with sub-types, using <code>#</code> as the break. The GSIs invert
+            the access pattern: instead of querying for the individual, query for the team and get
+            all the user or skill data in one go.
+          </p>
+          <p class="leading-relaxed">
+            Previously we had very targeted queries plus scans for anything large, across several
+            tables. Now there is one table and two projections, and <strong>every access pattern is
+            a query</strong>. This is the access-pattern table from our internal documentation, as
+            shown in the talk.
+          </p>
+
+          <div class="mt-6 -mx-6 sm:mx-0 px-6 sm:px-0 overflow-x-auto">
+            <table class="w-full min-w-[560px] text-sm border-collapse">
+              <caption class="sr-only">
+                Kaleida access patterns, mapping each data need to its table or index, partition
+                key, and sort key
+              </caption>
+              <thead>
+                <tr class="text-left border-b-2" style="border-color: var(--color-accent-border)">
+                  <th scope="col" class="py-2 pr-4 font-medium">Need</th>
+                  <th scope="col" class="py-2 pr-4 font-medium">Table / index</th>
+                  <th scope="col" class="py-2 pr-4 font-medium">PK</th>
+                  <th scope="col" class="py-2 font-medium">SK</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  accessPatterns.map((row) => (
+                    <tr class="border-b align-top" style="border-color: var(--color-border)">
+                      <td class="py-2.5 pr-4">{row.need}</td>
+                      <td class="py-2.5 pr-4 whitespace-nowrap">{row.source}</td>
+                      <td class="py-2.5 pr-4 font-mono text-xs whitespace-nowrap">{row.pk}</td>
+                      <td class="py-2.5 font-mono text-xs">{row.sk}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <p class="mt-6 leading-relaxed" style="color: var(--color-ink-muted)">
+            That table lived in our internal documentation, not just in the code. When you bring in
+            new tech you need to make it accessible to everyone, including the people doing client
+            support who are not in the codebase. Make it easy while they learn the new patterns.
+          </p>
+        </section>
+
+        <section aria-labelledby="execution">
+          <h2 id="execution" class="font-display text-2xl font-semibold mb-5">
+            Doing it without stopping
+          </h2>
+          <p class="leading-relaxed">
+            We had a live product, customers onboarding, features shipping, and a company ramping
+            up rather than down. A tools-down, all-hands rebuild was never on the table. Four
+            guiding principles held the plan together, and they held the whole way through.
+          </p>
+
+          <ul class="mt-6 space-y-3">
+            {
+              [
+                {
+                  label: 'Continue business as usual.',
+                  detail: 'Customers kept onboarding and features kept shipping throughout.',
+                },
+                {
+                  label: 'All new work migrates forward.',
+                  detail:
+                    'Anything new was built against the new architecture, so we were never making more work for the people doing the rebuild.',
+                },
+                {
+                  label: 'A small dedicated team for the pivot.',
+                  detail:
+                    'In a company of four, that meant one person focused on it for the first two months.',
+                },
+                {
+                  label: 'Rollback and verification at every step.',
+                  detail: 'Quality was part of the brand, so customers should never notice.',
+                },
+              ].map((principle) => (
+                <li class="flex gap-3 leading-relaxed">
+                  <span
+                    aria-hidden="true"
+                    class="flex-shrink-0 mt-[0.65em] w-1.5 h-1.5 rounded-full"
+                    style="background-color: var(--color-accent)"
+                  />
+                  <span>
+                    <strong>{principle.label}</strong> {principle.detail}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+
+          <p class="mt-6 leading-relaxed">
+            That last one is a great non-negotiable when you are playing with tech that is new to
+            you, because it mitigates a lot of the human mistake risk that comes with new tech.
+          </p>
+
+          <h3 class="font-display text-lg font-semibold mt-8 mb-3">
+            The approach: simple, but not easy
+          </h3>
+          <ol class="mt-6 space-y-4">
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              <strong>Dual writes.</strong> Every place that wrote to the database now wrote to both
+              structures, with migration scripts ETLing existing data across. New things went into
+              new tables deliberately, because if you get it wrong you blow it away, fix it, and
+              rerun it. We wrote a new data access layer at the same time, for clean code and a
+              clean teardown later.
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              <strong>Move the reads, with a fallback.</strong> Not a straight replace. The old
+              reads stayed in place, and any read failure on the new database raised an alarm and
+              fell back to the old one. Belts and braces. It bought us the confidence to test in
+              production. Cutover was per data object rather than horizontal: all frameworks, then
+              all users, then all teams, then all skills data.
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              <strong>Delete the old writes.</strong> I was tempted to skip this, on the "it's fine,
+              we'll come back and clean this up" reasoning. Our resident expert had their sensible
+              hat on and said no. A half completed migration is insanity. Double the maintenance,
+              and the bane of your future self.
+            </li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="time">
+          <h2 id="time" class="font-display text-2xl font-semibold mb-5">
+            "Sounds like you've done nothing for months"
+          </h2>
+          <p class="leading-relaxed">
+            Very few groups are as time-poor as a bootstrapping startup, so here are the real
+            numbers rather than a vague reassurance.
+          </p>
+          <p class="leading-relaxed">
+            The thinking and experimentation phase took <strong>weeks, not months</strong>. Whole
+            team sessions were a few hours or half days here and there, alongside business as
+            usual. Other pieces were the focused work of one person for a week or so.
+          </p>
+          <p class="leading-relaxed">
+            The migration itself ran <strong>about four months</strong> from first dual write to
+            the old structures being deleted. For scale: the whole company was four people, the
+            product and engineering team was three, and two of those were dedicated engineers. One
+            person was on the rewrite full time for the first two months. The final month was a
+            dedicated push. The first three ran as background work against a live product.
+          </p>
+          <p class="leading-relaxed">
+            Honestly <strong>it could have been under three months if
+            we had allowed ourselves an outage.</strong> Roughly a quarter of the elapsed time
+            bought the guarantee that customers never noticed.
+          </p>
+          <p class="leading-relaxed">
+            Time spent experimenting and testing tech is not time spent progressing product or
+            delighting customers. That is genuinely risky, and workload balance has to be managed
+            carefully. But if you want to be alive in five years as a company, you don't YOLO at
+            this point.
+          </p>
+          <blockquote class="my-7 pl-5 border-l-2 font-display text-lg leading-snug italic" style="border-color: var(--color-accent-border)">
+            There is never a good time to pivot on data or tech. There are plenty of bad times, but
+            if it's not a terrible time, then it's a good enough time.
+          </blockquote>
+        </section>
+
+        <section aria-labelledby="outcome">
+          <h2 id="outcome" class="font-display text-2xl font-semibold mb-5">What it bought us</h2>
+          <ul class="space-y-3">
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              <strong>Five in-pipeline prospective customers onboarded immediately</strong>, having
+              previously been unable to onboard due to configuration constraints
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              Feature shipping resumed with the whole team
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              Customers never noticed. Zero perceived disruption, by design
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              A shared domain language across the team, which outlasted the migration itself
+            </li>
+            <li class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
+              We celebrated, deliberately, before moving on. This is not optional
+            </li>
+          </ul>
+          <blockquote class="mt-8 pl-5 border-l-2 font-display text-xl leading-snug italic" style="border-color: var(--color-accent-border)">
+            The plane didn't crash.
+          </blockquote>
+        </section>
+
+        <section aria-labelledby="takeaways">
+          <h2 id="takeaways" class="font-display text-2xl font-semibold mb-5">
+            What I'd tell you
+          </h2>
+          <div class="space-y-6">
+            <div>
+              <h3 class="font-display text-lg font-semibold mb-2">
+                There is never a good time for a data rebuild
+              </h3>
+              <p class="leading-relaxed">
+                Putting it off until you have more resources just means you'll have more data,
+                constraints, customers, workarounds, and feature requests. There are plenty of bad
+                times for a rebuild, but if it's not a terrible time, then it's a good enough time.
+              </p>
+            </div>
+            <div>
+              <h3 class="font-display text-lg font-semibold mb-2">Don't be afraid of downtime</h3>
+              <p class="leading-relaxed">
+                This is my hindsight regret. We spent more time than we needed to in order to have a
+                zero downtime migration, when we have amazing customers and could have said "hey,
+                outage this weekend". If you are not flight control software, and your customers are
+                lovely, consider it. Even banks do it. I'm proud that we didn't do it, but we should
+                have.
+              </p>
+            </div>
+            <div>
+              <h3 class="font-display text-lg font-semibold mb-2">Model first, model often</h3>
+              <p class="leading-relaxed">
+                If you don't know how to model, don't panic, do it wrong and learn. Don't let not
+                being an expert stop you from deeply thinking, visualising, considering, and
+                communicating your systems, your options, and your future. I wish we had done
+                smaller, more frequent sessions earlier.
+              </p>
+            </div>
+            <div>
+              <h3 class="font-display text-lg font-semibold mb-2">Don't be afraid of new tech</h3>
+              <p class="leading-relaxed">
+                But have strong tech folks in your corner if you take that path. Don't do things
+                just because they are cool, but have smart folks on your team so you <em>can</em> do
+                cool things. Mostly, don't let fear drive your decisions. Take calculated risks at
+                the right time, but have plans for failure, and know how to pivot if it goes wrong.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="spine">
+          <h2 id="spine" class="font-display text-2xl font-semibold mb-5">The path, in nine steps</h2>
+          <ol class="space-y-2.5 list-none">
+            {
+              spine.map((step, i) => (
+                <li class="flex gap-3 leading-relaxed">
+                  <span class="font-display font-semibold flex-shrink-0" style="color: var(--color-accent)">
+                    {i + 1}.
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <!-- Close -->
+        <section aria-labelledby="cta" class="pt-10 border-t" style="border-color: var(--color-border)">
+          <h2 id="cta" class="font-display text-2xl font-semibold mb-4">
+            Got a decision like this in front of you?
+          </h2>
+          <p class="leading-relaxed">
+            The most useful thing I did in this whole story was ask someone outside the team to look
+            at what we had built and what we wanted. If you're weighing up a change of this size,
+            I'm happy to be that person in the room.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3" role="list">
+            <a
+              href="mailto:hello@susanbrander.com?subject=Fractional%20%2F%20advisory%20enquiry"
+              role="listitem"
+              class="btn-primary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline transition-colors"
+            >
+              Start a conversation
+            </a>
+            <a
+              href="/#speaking"
+              role="listitem"
+              class="btn-secondary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline border transition-colors"
+            >
+              See more talks
+            </a>
+          </div>
+        </section>
+      </div>
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+  }
+  .btn-secondary {
+    color: var(--color-ink);
+    border-color: var(--color-border);
+  }
+  .btn-secondary:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  code {
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background-color: var(--color-surface);
+  }
+</style>

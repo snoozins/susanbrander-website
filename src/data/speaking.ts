@@ -6,6 +6,7 @@ export interface Talk {
   description: string;
   videoUrl?: string;
   videoLabel?: string; // defaults to "Watch the talk" if omitted
+  caseStudyUrl?: string; // internal route to a written case study, if one exists
 }
 
 export const talks: Talk[] = [
@@ -15,8 +16,9 @@ export const talks: Talk[] = [
     date: 'November 2025',
     url: 'https://2025.adaconf.org/',
     description:
-      'A technical architecture case study on pivoting data approach while live — delivered at a conference dedicated to evolutionary architecture and socio-technical systems thinking.',
+      'A technical architecture case study on pivoting data approach while live, delivered at a conference dedicated to evolutionary architecture and socio-technical systems thinking.',
     videoUrl: 'https://www.youtube.com/watch?v=pgXjchZjuMI',
+    caseStudyUrl: '/speaking/adaconf-2025-data-pivot',
   },
   {
     conference: 'DDD Adelaide 2025',
@@ -24,7 +26,7 @@ export const talks: Talk[] = [
     date: 'November 2025',
     url: 'https://dddadelaide.com/agenda',
     description:
-      'Applying the same mindset used for shipping features to professional growth — picking the right skills to focus on, making growth visible, and ensuring it gets recognised.',
+      'Applying the same mindset used for shipping features to professional growth: picking the right skills to focus on, making growth visible, and ensuring it gets recognised.',
     videoUrl: 'https://www.youtube.com/shorts/T_-QsUgSyZw',
     videoLabel: 'Watch the preview',
   },
@@ -51,7 +53,7 @@ export const talks: Talk[] = [
     date: '',
     url: 'https://anz.serverlessdays.io/speakers/susan/',
     description:
-      'How Kaleida rapidly validated and shipped an MVP using SST — pragmatic, cost-effective approaches to launching ideas without expensive prototyping.',
+      'How Kaleida rapidly validated and shipped an MVP using SST: pragmatic, cost-effective approaches to launching ideas without expensive prototyping.',
     videoUrl: 'https://www.youtube.com/watch?v=fHpKAF57F0c',
   },
 ];

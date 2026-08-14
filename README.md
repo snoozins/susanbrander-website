@@ -28,6 +28,7 @@ Open [http://localhost:4321](http://localhost:4321).
 | `npm run build`   | Build static output to `dist/`      |
 | `npm run preview` | Preview the production build locally |
 | `npm run check`   | Type-check with `astro check`       |
+| `npm run og`      | Regenerate the social share cards   |
 
 ## Project structure
 
@@ -36,11 +37,15 @@ src/
   components/   # Hero, About, Speaking, TechLeadingLadies, Links, Footer
   data/         # speaking.ts — typed talk data
   layouts/      # BaseLayout.astro — HTML shell, meta, OG tags, fonts
-  pages/        # index.astro
+  pages/        # index.astro, speaking/<talk>.astro
   styles/       # global.css — design tokens, base styles
+scripts/
+  generate-og.ts # builds the share cards in public/
 public/
   favicon.svg
   images/       # speaking photos
+  og-image.png  # default share card (generated)
+  og/           # per-page share cards (generated)
 docs/           # Research and profile (not deployed)
 ```
 
@@ -60,5 +65,6 @@ No `vercel.json` is required. Vercel auto-detects Astro, runs `astro build`, and
 | Speaking photos | `public/images/` — drop JPEGs in, update `src/components/Speaking.astro` |
 | About / hero copy | `src/components/About.astro`, `src/components/Hero.astro` |
 | Links | `src/components/Links.astro` |
-| Meta / OG tags | `src/pages/index.astro` |
+| Meta / OG tags | `src/pages/index.astro`, or the page's own `BaseLayout` props |
+| Share card text | `scripts/generate-og.ts`, then `npm run og` and commit the PNGs |
 | Colours and fonts | `src/styles/global.css` (`@theme` block) |

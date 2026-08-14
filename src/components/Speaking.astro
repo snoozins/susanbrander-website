@@ -39,17 +39,28 @@ import { talks } from '../data/speaking';
               <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-ink-muted)">
                 {talk.description}
               </p>
-              {talk.videoUrl && (
-                <a
-                  href={talk.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1.5 mt-3 text-sm font-medium no-underline hover:underline"
-                >
-                  <span aria-hidden="true">▶</span>
-                  {talk.videoLabel ?? 'Watch the talk'}
-                </a>
-              )}
+              <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
+                {talk.videoUrl && (
+                  <a
+                    href={talk.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 text-sm font-medium no-underline hover:underline"
+                  >
+                    <span aria-hidden="true">▶</span>
+                    {talk.videoLabel ?? 'Watch the talk'}
+                  </a>
+                )}
+                {talk.caseStudyUrl && (
+                  <a
+                    href={talk.caseStudyUrl}
+                    class="inline-flex items-center gap-1.5 text-sm font-medium no-underline hover:underline"
+                  >
+                    <span aria-hidden="true">✎</span>
+                    Read the case study
+                  </a>
+                )}
+              </div>
             </article>
           </li>
         ))
