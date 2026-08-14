@@ -39,6 +39,7 @@ import { talks } from '../data/speaking';
               <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-ink-muted)">
                 {talk.description}
               </p>
+              {(talk.videoUrl || talk.caseStudyUrl) && (
               <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
                 {talk.videoUrl && (
                   <a
@@ -61,6 +62,7 @@ import { talks } from '../data/speaking';
                   </a>
                 )}
               </div>
+              )}
             </article>
           </li>
         ))
