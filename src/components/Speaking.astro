@@ -18,6 +18,14 @@ import { talks } from '../data/speaking';
           <li role="listitem">
             <article class="pl-5 border-l-2" style="border-color: var(--color-accent-border)">
               <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 text-sm font-medium" style="color: var(--color-ink-muted)">
+                {talk.upcoming && (
+                  <span
+                    class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide"
+                    style="background-color: var(--color-accent); color: var(--color-cream)"
+                  >
+                    Upcoming
+                  </span>
+                )}
                 <span>{talk.conference}</span>
                 {talk.date && (
                   <>
