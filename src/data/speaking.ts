@@ -7,9 +7,22 @@ export interface Talk {
   videoUrl?: string;
   videoLabel?: string; // defaults to "Watch the talk" if omitted
   caseStudyUrl?: string; // internal route to a written case study, if one exists
+  upcoming?: boolean; // not yet delivered — carries an "Upcoming" badge, list these first
 }
 
 export const talks: Talk[] = [
+  {
+    conference: 'ADAConf 2026',
+    title: 'Building with Curiosity and a Strategic Mindset',
+    date: 'November 2026',
+    url: 'https://adaconf.org/#agenda',
+    description:
+      'A two hour hands-on workshop where teams stress-test whether the architecture, product and people inside a fictional company actually match its goals, then adapt the plan as requirements shift mid-session.',
+    videoUrl:
+      'https://www.linkedin.com/posts/adaconf_adaconf-softwarearchitecture-softwareengineering-activity-7502501138840223744-Ncux',
+    videoLabel: 'Watch the preview on LinkedIn',
+    upcoming: true,
+  },
   {
     conference: 'ADAConf 2025',
     title: 'Changing the engine mid-flight: A startup data pivot',
