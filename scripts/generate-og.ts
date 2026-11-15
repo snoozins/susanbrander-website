@@ -59,6 +59,12 @@ const CARDS: Card[] = [
     dek: 'A startup data pivot',
     meta: 'Susan Brander · ADAConf 2025',
   },
+  {
+    file: 'og/pause.png',
+    title: 'The pause',
+    dek: 'Write your ideas, then test them.',
+    meta: 'Susan Brander · ADAConf 2026',
+  },
 ];
 
 function escapeXml(value: string): string {

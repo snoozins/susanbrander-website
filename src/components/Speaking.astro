@@ -47,7 +47,7 @@ import { talks } from '../data/speaking';
               <p class="mt-2 text-sm leading-relaxed" style="color: var(--color-ink-muted)">
                 {talk.description}
               </p>
-              {(talk.videoUrl || talk.caseStudyUrl) && (
+              {(talk.videoUrl || talk.caseStudyUrl || talk.playbookUrl) && (
               <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
                 {talk.videoUrl && (
                   <a
@@ -67,6 +67,15 @@ import { talks } from '../data/speaking';
                   >
                     <span aria-hidden="true">✎</span>
                     Read the case study
+                  </a>
+                )}
+                {talk.playbookUrl && (
+                  <a
+                    href={talk.playbookUrl}
+                    class="inline-flex items-center gap-1.5 text-sm font-medium no-underline hover:underline"
+                  >
+                    <span aria-hidden="true">→</span>
+                    Get the playbook
                   </a>
                 )}
               </div>

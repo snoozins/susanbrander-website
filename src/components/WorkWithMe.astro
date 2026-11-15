@@ -1,9 +1,89 @@
 ---
+const movingTargetBody = [
+  'Hi Susan,',
+  '',
+  "I'd like to book Moving Target for my team.",
+  '',
+  'Company:',
+  'Number of teams (1 to 3):',
+  'Rough dates:',
+  'In person or remote:',
+  '',
+].join('\n');
+
+const movingTargetHref = `mailto:hello@susanbrander.com?subject=${encodeURIComponent(
+  'Booking Moving Target'
+)}&body=${encodeURIComponent(movingTargetBody)}`;
+
+import { talks } from '../data/speaking';
+
+const adaconf = talks.find((talk) => talk.conference === 'ADAConf 2026');
+const adaconfSiteUrl = 'https://adaconf.org/';
+
+const bossQuotes = [
+  'When priorities change, we either scrap the plan or cling to it.',
+  'Nobody feels safe committing without certainty, so decisions get escalated, deferred, or made by default.',
+  'Nobody can explain why we built it this way, including us six months later.',
+];
 ---
 
 <section id="work-with-me" aria-label="Work with Susan" class="py-16 sm:py-20 border-t" style="border-color: var(--color-border)">
   <div class="mx-auto max-w-[680px] px-6 sm:px-8">
     <h2 class="font-display text-2xl sm:text-3xl font-semibold mb-7">Work with me</h2>
+
+    <article id="moving-target" aria-labelledby="moving-target-heading">
+      <h3 id="moving-target-heading" class="font-display text-xl sm:text-2xl font-semibold mb-4">
+        Moving Target
+      </h3>
+
+      <div class="space-y-5 leading-relaxed">
+        <p>
+          A four hour strategy simulation for engineering, product and architecture teams. You'll
+          never have all the information. Moving Target teaches your team to decide well anyway.
+        </p>
+        {adaconf && (
+          <p>
+            Want to try it first? I'm running a two hour version,
+            <a href={adaconf.url}>{adaconf.title}</a>, at
+            <a href={adaconfSiteUrl}>ADAConf 2026</a> on 19 to 20 November. Come and play.
+          </p>
+        )}
+        <p>
+          Your team becomes the new technical leadership of a fictitious company, with a bold goal
+          from the board. They build a strategy, and then things change while they're still building
+          it. They leave with the pause: stopping before picking up a task or a request to ask what it
+          enables and what it prevents, plus <a href="/pause">a playbook of questions</a> to use on Monday.
+        </p>
+        <div>
+          <p class="mb-3">It's built for teams where you hear:</p>
+          <ul class="space-y-2 pl-5 border-l-2" style="border-color: var(--color-accent)">
+            {bossQuotes.map((quote) => <li class="italic">"{quote}"</li>)}
+          </ul>
+        </div>
+        <p>
+          <strong>In person or remote, one to three teams, from $950 ex GST.</strong>
+        </p>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a
+          href={movingTargetHref}
+          class="btn-primary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline transition-colors"
+        >
+          Book your team
+        </a>
+        {adaconf && (
+          <a
+            href={adaconfSiteUrl}
+            class="btn-secondary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline border transition-colors"
+          >
+            Try it at ADAConf 2026
+          </a>
+        )}
+      </div>
+    </article>
+
+    <h3 class="font-display text-xl sm:text-2xl font-semibold mt-12 mb-4">Fractional and advisory</h3>
 
     <div class="space-y-5 leading-relaxed">
       <p>
@@ -35,7 +115,7 @@
       <a
         href="mailto:hello@susanbrander.com?subject=Fractional%20%2F%20advisory%20enquiry"
         role="listitem"
-        class="btn-primary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline transition-colors"
+        class="btn-secondary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline border transition-colors"
       >
         Start a conversation
       </a>

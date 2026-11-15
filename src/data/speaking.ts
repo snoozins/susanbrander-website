@@ -7,6 +7,7 @@ export interface Talk {
   videoUrl?: string;
   videoLabel?: string; // defaults to "Watch the talk" if omitted
   caseStudyUrl?: string; // internal route to a written case study, if one exists
+  playbookUrl?: string; // internal route to a takeaway playbook, if one exists
   upcoming?: boolean; // not yet delivered — carries an "Upcoming" badge, list these first
 }
 
@@ -21,6 +22,7 @@ export const talks: Talk[] = [
     videoUrl:
       'https://www.linkedin.com/posts/adaconf_adaconf-softwarearchitecture-softwareengineering-activity-7502501138840223744-Ncux',
     videoLabel: 'Watch the preview on LinkedIn',
+    playbookUrl: '/pause',
     upcoming: true,
   },
   {
