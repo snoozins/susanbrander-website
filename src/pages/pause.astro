@@ -1,0 +1,520 @@
+---
+/**
+ * The Pause Playbook: the takeaway from the ADAConf 2026 workshop.
+ *
+ * Most visitors arrive from a QR code on a slide, so this page is phone first.
+ * It is deliberately kept off the main navigation; the ADAConf 2026 entry in
+ * the speaking list links here.
+ *
+ * Keep the wording and the numbering of the seven questions stable: people
+ * refer to them by number.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const description =
+  'Write your ideas, then test them. A technical strategy playbook for making decisions with incomplete information.';
+
+const think = [
+  'about what we do, and what we don’t do',
+  'about what is likely on the horizon, and what isn’t',
+  'about how we balance everyone’s needs',
+  'about the future we’re building, and what it will enable',
+];
+
+const askAround = [
+  'What outcome is the business trying to reach, and how will we know when we get there?',
+  'Who asked for this, and what problem were they trying to solve?',
+  'What’s already promised, or due? To whom, and by when?',
+  'Who owns this today? Who would own it if we did it?',
+  'What happens if we don’t do it?',
+  'Has this been tried before? Why did it stop?',
+  'Who else is waiting on this, or would use it?',
+  'How do we know? What’s evidence, and what’s assumed?',
+  'Who has the capacity, and from when?',
+];
+
+/** The seven. Order is load bearing: people refer to them by number. */
+const seven: { question: string; sub?: string }[] = [
+  { question: 'What does this make easier later?' },
+  { question: 'What does it make harder, or stop us doing?' },
+  { question: 'Which other parts of the business does this help?', sub: 'Who waits, or loses out?' },
+  { question: 'Is it a customer outcome, or a foundation?', sub: 'What does it unlock?' },
+  { question: 'Is now the right time?', sub: 'If not now, when?' },
+  {
+    question: 'What are we choosing not to do yet?',
+    sub: 'Did we choose it, or just not get to it? What’s already promised, or due?',
+  },
+  { question: 'What would have to be true for this to be the wrong call?' },
+];
+
+const assumptionsColumns = ['We’re assuming…', 'If we’re wrong…', 'We’d find out by…'];
+const assumptionsExample = [
+  'The thing we’re betting on',
+  'What breaks, and who notices',
+  'The signal, and when we’d see it',
+];
+
+const logColumns = [
+  'Who and when',
+  'Decision',
+  'Why',
+  'Who else it helps',
+  'What it makes harder',
+  'Revisit if…',
+];
+const logExample = [
+  'Who decided, and the date',
+  'What we chose',
+  'The outcome it moves',
+  'Other teams, or parts of the business',
+  'What it costs, or stops us doing',
+  'The signal that reopens it',
+];
+---
+
+<BaseLayout
+  title="The Pause Playbook | Susan Brander"
+  description={description}
+  ogTitle="The Pause Playbook"
+  ogDescription={description}
+  ogImage="/og/pause.png"
+>
+  <main class="pause mx-auto max-w-[680px] px-6 sm:px-8 pt-14 sm:pt-20 pb-16">
+    <article class="flex flex-col gap-12">
+      <header class="flex flex-col gap-5">
+        <p class="eyebrow">A technical strategy playbook</p>
+        <h1 class="font-display text-5xl sm:text-6xl font-bold leading-none tracking-tight">The pause</h1>
+        <p class="text-xl leading-relaxed">
+          <mark>Write your ideas, then test them.</mark> Before you commit to a decision about
+          architecture, product or people, take a breath, and ask it some questions.
+        </p>
+        <p class="text-sm muted">
+          By <a href="/">Susan Brander</a>, CTO at Kaleida <span aria-hidden="true">·</span> From my
+          ADAConf 2026 workshop
+        </p>
+      </header>
+
+      <section class="flex flex-col gap-4" aria-labelledby="why">
+        <h2 id="why">Why pause</h2>
+        <p>
+          By the time a decision is due, you’ve read everything, asked around, and you probably have a
+          dozen ideas. Some already seem obvious. You’ve likely asked questions shaped by the idea
+          that’s already forming. Before leaping into doing, stop and think:
+        </p>
+        <ul class="think">
+          {think.map((item) => <li>{item}</li>)}
+        </ul>
+      </section>
+
+      <section class="flex flex-col gap-6" aria-labelledby="kinds">
+        <h2 id="kinds">Two kinds of question</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="kind">
+            <strong>Questions that inform a decision</strong>
+            <span>Asked of other people, to get the information the decision needs.</span>
+          </div>
+          <div class="kind">
+            <strong>Questions that test a decision</strong>
+            <span>
+              Asked of the decision itself, to check it holds up, and to explain its reach and limits to
+              others.
+            </span>
+          </div>
+        </div>
+        <p class="thesis text-lg leading-relaxed pl-5 border-l-2" style="border-color: var(--color-accent)">
+          There’s never enough information to reach the correct decision. You decide anyway, and write
+          down what’s left unknown.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="ask">
+        <h2 id="ask">Before you decide: ask around</h2>
+        <p>Questions that inform. Ask them of the people closest to the work.</p>
+        <ul class="ask">
+          {askAround.map((question) => <li>{question}</li>)}
+        </ul>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="test">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 id="test">The pause: test it</h2>
+          <button id="copy-seven" type="button" class="copy">Copy the seven</button>
+        </div>
+        <span id="copy-status" class="sr-only" role="status" aria-live="polite"></span>
+        <p>Questions that test a decision. Ask each one of every idea you’re about to commit to.</p>
+        <p id="goal-first">
+          <strong>Start with the goal.</strong> Which business outcome does this move? If it moves none,
+          ask why it’s on the list.
+        </p>
+        <ol class="seven" id="seven">
+          {
+            seven.map(({ question, sub }) => (
+              <li>
+                <div>
+                  <b>{question}</b>
+                  {sub && <span class="sub"> {sub}</span>}
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="muted">
+          If an idea doesn’t survive a question, change it or drop it. If nobody knows the answer, that’s
+          an answer too: write it down.
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="unknown">
+        <h2 id="unknown">Write down what you don’t know</h2>
+        <p>
+          Choosing now means guessing at the horizon. Make the guesses visible, so you know what to watch.
+        </p>
+        <table class="template">
+          <thead>
+            <tr>{assumptionsColumns.map((column) => <th scope="col">{column}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {assumptionsExample.map((cell, i) => <td data-label={assumptionsColumns[i]}>{cell}</td>)}
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="log">
+        <h2 id="log">Log every decision</h2>
+        <p>Log every decision where others can find it:</p>
+        <table class="template log">
+          <thead>
+            <tr>{logColumns.map((column) => <th scope="col">{column}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>{logExample.map((cell, i) => <td data-label={logColumns[i]}>{cell}</td>)}</tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="delay">
+        <h2 id="delay">Delaying is a decision</h2>
+        <p>
+          Not doing something is a choice, <mark>when you make it on purpose</mark>. Give every
+          <em>not yet</em> a reason and a trigger: <strong>not yet, until…</strong>
+        </p>
+        <p>A <em>not yet</em> goes in the same log, and <strong>Revisit if…</strong> is its trigger.</p>
+      </section>
+
+      <section class="flex flex-col gap-4" aria-labelledby="moves">
+        <h2 id="moves">When the world moves</h2>
+        <p>
+          It will. When it does, don’t start again. Sort what you have into two piles,
+          <strong>still works</strong> and <strong>doesn’t</strong>, with nothing in between. What you’ve
+          built <mark class="green">stays built</mark>. Everything else is yours to change.
+        </p>
+        <p class="muted">
+          Plans built on capabilities tend to survive. Plans built on a specific route tend not to.
+        </p>
+      </section>
+
+      <section class="monday flex flex-col gap-4" aria-labelledby="monday">
+        <h2 id="monday">On Monday</h2>
+        <ol>
+          <li>Pick one decision: the next one you have to make, or one you’ve already made.</li>
+          <li>Run it through the seven questions. Note which one changed something.</li>
+          <li>Write down one thing you’re assuming, and how you’d find out you’re wrong.</li>
+        </ol>
+      </section>
+
+      <aside class="flex flex-col gap-3 pt-8 border-t" style="border-color: var(--color-border)">
+        <p class="font-semibold">Want to run this with your team?</p>
+        <div>
+          <a
+            href="/#moving-target"
+            class="cta inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline transition-colors"
+          >
+            See Moving Target
+          </a>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .pause {
+    --hl: rgba(147, 51, 234, 0.2);
+    --hl-green: rgba(64, 196, 120, 0.32);
+  }
+
+  .pause h2 {
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .muted {
+    color: var(--color-ink-muted);
+  }
+
+  /* Highlighter marks: a band through the middle of the line, not a full box. */
+  mark {
+    color: inherit;
+    padding: 0 0.12em;
+    background: linear-gradient(transparent 12%, var(--hl) 12%, var(--hl) 88%, transparent 88%);
+  }
+  mark.green {
+    background: linear-gradient(transparent 12%, var(--hl-green) 12%, var(--hl-green) 88%, transparent 88%);
+  }
+
+  .pause em {
+    font-style: italic;
+  }
+
+  ul.think {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  ul.think li {
+    position: relative;
+    padding-left: 1.375rem;
+  }
+  ul.think li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85em;
+    width: 10px;
+    height: 2px;
+    background: var(--color-accent);
+  }
+
+  .kind {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-surface);
+  }
+  .kind strong {
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .kind span {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  ul.ask,
+  ol.seven {
+    list-style: none;
+    padding: 0;
+    border-top: 2px solid var(--color-ink);
+  }
+  ul.ask li {
+    position: relative;
+    padding: 0.75rem 0 0.75rem 1.375rem;
+    border-bottom: 1px solid var(--color-border);
+    line-height: 1.6;
+  }
+  ul.ask li::before {
+    content: '?';
+    position: absolute;
+    left: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  ol.seven {
+    counter-reset: q;
+  }
+  ol.seven li {
+    counter-increment: q;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 0.625rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--color-border);
+    line-height: 1.6;
+  }
+  ol.seven li::before {
+    content: counter(q);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  ol.seven li > div {
+    min-width: 0;
+  }
+  ol.seven b {
+    display: block;
+    font-weight: 600;
+  }
+  ol.seven .sub {
+    font-size: 0.96875rem;
+    color: var(--color-ink-muted);
+  }
+
+  .copy {
+    font: 600 0.875rem var(--font-body);
+    color: var(--color-accent);
+    background: transparent;
+    border: 1.5px solid var(--color-accent);
+    border-radius: 999px;
+    padding: 0.4375rem 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .copy:hover {
+    background: var(--color-surface);
+  }
+
+  /* Templates: a normal table on wider screens, stacked label and value pairs on a phone. */
+  table.template {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.96875rem;
+    line-height: 1.5;
+  }
+  .template th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.5rem 0.625rem 0.5rem 0;
+    border-bottom: 2px solid var(--color-ink);
+    vertical-align: bottom;
+  }
+  .template td {
+    padding: 0.625rem 0.625rem 0.625rem 0;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+    color: var(--color-ink-muted);
+  }
+  /* Six columns: fixed layout keeps them even, so no heading gets squeezed. */
+  .template.log {
+    table-layout: fixed;
+  }
+
+  @media (max-width: 560px) {
+    .template thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+    .template,
+    .template tbody,
+    .template tr,
+    .template td {
+      display: block;
+    }
+    .template tr {
+      border-top: 2px solid var(--color-ink);
+    }
+    .template td {
+      padding: 0.625rem 0;
+    }
+    .template td::before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+  }
+
+  .monday {
+    padding: 1.375rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+  }
+  .monday ol {
+    list-style: decimal;
+    padding-left: 1.375rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .monday li {
+    line-height: 1.6;
+  }
+
+  .cta {
+    background-color: var(--color-accent);
+    color: white;
+  }
+  .cta:hover {
+    background-color: var(--color-accent-hover);
+    color: white;
+  }
+
+  /* global.css spaces consecutive paragraphs; the sections here set their own gaps. */
+  .pause p + p {
+    margin-top: 0;
+  }
+</style>
+
+<script>
+  const button = document.getElementById('copy-seven');
+  const status = document.getElementById('copy-status');
+  const list = document.getElementById('seven');
+  const label = 'Copy the seven';
+
+  if (button && list) {
+    const announce = (text: string) => {
+      button.textContent = text;
+      if (status) status.textContent = text;
+      window.setTimeout(() => {
+        button.textContent = label;
+        if (status) status.textContent = '';
+      }, 1800);
+    };
+
+    // If the clipboard is unavailable, select the list so the visitor can copy it by hand.
+    const selectInstead = () => {
+      const range = document.createRange();
+      range.selectNodeContents(list);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      announce('Selected: copy it');
+    };
+
+    button.addEventListener('click', () => {
+      const items = Array.from(list.querySelectorAll('li')).map(
+        (li, i) => `${i + 1}. ${(li.textContent ?? '').replace(/\s+/g, ' ').trim()}`
+      );
+      const goal = (document.getElementById('goal-first')?.textContent ?? '').replace(/\s+/g, ' ').trim();
+      const text = `The pause: write your ideas, then test them.\n\n${goal}\n\n${items.join('\n')}`;
+      try {
+        navigator.clipboard.writeText(text).then(() => announce('Copied'), selectInstead);
+      } catch {
+        selectInstead();
+      }
+    });
+  }
+</script>
