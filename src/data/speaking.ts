@@ -23,7 +23,6 @@ export const talks: Talk[] = [
       'https://www.linkedin.com/posts/adaconf_adaconf-softwarearchitecture-softwareengineering-activity-7502501138840223744-Ncux',
     videoLabel: 'Watch the preview on LinkedIn',
     playbookUrl: '/pause',
-    upcoming: true,
   },
   {
     conference: 'ADAConf 2025',

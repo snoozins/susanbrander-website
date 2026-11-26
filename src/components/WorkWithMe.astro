@@ -43,11 +43,28 @@ const bossQuotes = [
         </p>
         {adaconf && (
           <p>
-            Want to try it first? I'm running a two hour version,
-            <a href={adaconf.url}>{adaconf.title}</a>, at
-            <a href={adaconfSiteUrl}>ADAConf 2026</a> on 19 to 20 November. Come and play.
+            I ran a two hour version, <a href="#speaking">{adaconf.title}</a>, at
+            <a href={adaconfSiteUrl}>ADAConf 2026</a> in November.
           </p>
         )}
+        <img
+          src="/images/adaconf-2026-workshop.jpeg"
+          alt="Susan Brander presenting at the front of a room at ADAConf 2026 while teams at round tables work through the Pets'R'Us scenario paperwork"
+          width="1024"
+          height="768"
+          class="w-full h-auto rounded-lg"
+          loading="lazy"
+        />
+        <figure class="pl-5 border-l-2" style="border-color: var(--color-accent)">
+          <blockquote class="italic">
+            "Being a person who has only really worked in technical teams, I really enjoyed the insight
+            into all the different parts of the business that need to be taken into account when
+            developing a strategy."
+          </blockquote>
+          <figcaption class="mt-2 text-sm" style="color: var(--color-ink-muted)">
+            Workshop participant, ADAConf 2026
+          </figcaption>
+        </figure>
         <p>
           Your team becomes the new technical leadership of a fictitious company, with a bold goal
           from the board. They build a strategy, and then things change while they're still building
@@ -72,14 +89,6 @@ const bossQuotes = [
         >
           Book your team
         </a>
-        {adaconf && (
-          <a
-            href={adaconfSiteUrl}
-            class="btn-secondary inline-flex items-center px-5 py-2.5 rounded-md font-medium text-sm no-underline hover:no-underline border transition-colors"
-          >
-            Try it at ADAConf 2026
-          </a>
-        )}
       </div>
     </article>
 
